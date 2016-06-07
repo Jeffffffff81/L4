@@ -25,27 +25,38 @@ architecture rtl of ksa is
     );
     END COMPONENT;
 	 
-	 
 	 COMPONENT s_memory IS
 	 PORT
 	 (
 		address		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
-		clock		: IN STD_LOGIC  := '1';
+		clock		: IN STD_LOGIC;
 		data		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
-		wren		: IN STD_LOGIC ;
+		wren		: IN STD_LOGIC;
 		q		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
 	 );
     END COMPONENT;
 	 
+	 COMPONENT task1FSM IS
+	 PORT
+	 (
+		start : IN STD_LOGIC := '1'; -- DEBUG
+		clock	: IN STD_LOGIC;
+		restart : IN STD_LOGIC := '1'; -- DEBUG
+		data : OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
+		address : OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
+		wren : OUT STD_LOGIC
+	 );
+	 END COMPONENT;
+	 
 	 
 	 -- memory signals
-	 SIGNAL s_address : STD_LOGIC_VECTOR (7 DOWNTO 0) := "00000000";
-	 SIGNAL  s_data : STD_LOGIC_VECTOR (7 DOWNTO 0) := "00000000";
-	 SIGNAL s_wren : STD_LOGIC := '0';
+	 SIGNAL s_address : STD_LOGIC_VECTOR (7 DOWNTO 0);
+	 SIGNAL  s_data : STD_LOGIC_VECTOR (7 DOWNTO 0);
+	 SIGNAL s_wren : STD_LOGIC;
 	 SIGNAL s_q : STD_LOGIC_VECTOR (7 DOWNTO 0);
 	 
     -- clock and reset signals  
-	 signal clk, reset_n : std_logic;										
+	 signal clk, reset_n : STD_LOGIC;										
 
 begin
 
@@ -53,7 +64,7 @@ begin
     reset_n <= KEY(3);
 
 	 memoryArray : s_memory port map(s_address, clk, s_data, s_wren, s_q);
-	 
+	 initializer : task1FSM port map(null, clk, null, s_data, s_address, s_wren);
 end RTL;
 
 
