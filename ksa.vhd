@@ -24,7 +24,26 @@ architecture rtl of ksa is
         nIn : IN STD_LOGIC_VECTOR (3 DOWNTO 0)
     );
     END COMPONENT;
-   
+	 
+	 
+	 COMPONENT s_memory IS
+	 PORT
+	 (
+		address		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		clock		: IN STD_LOGIC  := '1';
+		data		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		wren		: IN STD_LOGIC ;
+		q		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
+	 );
+    END COMPONENT;
+	 
+	 
+	 -- memory signals
+	 SIGNAL s_address : STD_LOGIC_VECTOR (7 DOWNTO 0) := "00000000";
+	 SIGNAL  s_data : STD_LOGIC_VECTOR (7 DOWNTO 0) := "00000000";
+	 SIGNAL s_wren : STD_LOGIC := '0';
+	 SIGNAL s_q : STD_LOGIC_VECTOR (7 DOWNTO 0);
+	 
     -- clock and reset signals  
 	 signal clk, reset_n : std_logic;										
 
@@ -33,6 +52,8 @@ begin
     clk <= CLOCK_50;
     reset_n <= KEY(3);
 
+	 memoryArray : s_memory port map(s_address, clk, s_data, s_wren, s_q);
+	 
 end RTL;
 
 
