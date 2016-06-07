@@ -1,0 +1,6 @@
+*
+!*.v
+!*.sv
+!.gitignore
+!*.psm
+!*.vhd
