@@ -41,6 +41,18 @@ module ksa(
 	assign reset_n = KEY[3];
 
 	/*
+	 * Control
+	 */
+	wire startTask1, stopTask1;
+	 
+	ControllerFSM(
+		.clock(clk),
+		.startTask1(startTask1),
+		.stopTask1(stopTask1)
+	);
+	
+	
+	/*
 	 * S memory and controllers
 	 */
 	logic[7:0] s_address, s_data,  s_q;
@@ -55,9 +67,9 @@ module ksa(
 	);
 	
 	task1FSM(
-		.start(1'b1),
 		.clock(clk),
-		.restart(1'b1),
+		.start(startTask1),
+		.stop(),
 		.data(s_data),
 		.address(s_address),
 		.wren(s_wren)

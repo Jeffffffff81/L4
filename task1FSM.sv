@@ -1,66 +1,49 @@
-module task1FSM(start, clock, restart, data, wren, address);
+module task1FSM(start, clock, data, wren, stop, address);
+	input logic clock, start;
+	output logic wren, stop;
+	output logic [7:0] data, address;
 	
-	//inputs to FSM
-	input logic start; 
-	input logic clock;
-	input logic restart; 
+	//state encoding {state bits}, {wren}, {inc}, {stop}
+	logic[6:0] state;
+	parameter idle = 7'b0000_0_0_0;
+	parameter initialize_a = 7'b0001_1_0_0;
+	parameter initialize_b = 7'b0010_0_1_0;
+	parameter finished = 7'b0010_0_0_1;
 	
-	//outputs from FSM 
-	output logic [7:0] data; 
-	output logic [7:0] address; 
-	output logic wren; 
+	//output logic:
+	logic inc;
 	
-	//states
-	//state bits: wren_choose_inc
-	parameter [2:0] idle = 3'b0_0_0; 
-	parameter [2:0] write = 3'b1_1_0; 
-	parameter [2:0] incr_counter = 3'b0_0_1; 
+	assign wren = state[2];
+	assign inc = state[1];
+	assign stop = state[0];
 	
-	//wire declarations 
-	logic [2:0] state, next;
-	logic choose, inc; 
-	reg [8:0] counter = 9'b0; //9 bits for counter variable  
+	reg[7:0] counter = 0;
+	always_ff @(posedge clock) begin
+		if(inc)
+			counter <= counter + 1;
+		else if (inc == 8'b1111_1111)
+			counter <= 0;
+		else
+			counter <= counter;
+	end
 	
+	assign data = counter;
+	assign address = counter;
 	
-	//restat logic 
-	always_ff @(posedge clock or negedge restart)
-		if(!restart) state <= idle; 
-		else 		state <= next; 
-		
-	//next state combinational logic 
-	always_comb begin
-		next = 3'b000; 
-		case(state)
+	//state transition
+	always_ff @(posedge clock) begin
+		case(state) 
+			idle: state <= (start) ? initialize_a : idle;
 			
-			idle: if(start) next = write; 
-				  else 		next = idle; 
+			initialize_a: state <= (counter == 8'b1111_1111) ? finished : initialize_b;
 			
-			write: 	next = incr_counter; 
+			initialize_b: state <= (counter == 8'b1111_1111) ? finished : initialize_a;
 			
-			incr_counter: 	if(counter < 256) next = write; 
-							else 			  next = idle; 
+			finished: state <= idle;
+			
+			default: state <= idle;
 		endcase
-	end 
-	
-	//output logic of FSM 
-	assign wren = state[2]; 	//output signal 
-	assign choose = state[1]; 	//for the mux 
-	assign inc = state[0]; 		//for the counter 
-	
-	//outputs for address and data 
-	assign data = choose ? counter : 9'bzzzzzzzzz;
-	assign address = choose ? counter : 9'bzzzzzzzzz;
-	
-	//counter logic 
-	always_ff @(posedge inc) begin
-			if(!restart) begin
-				counter <= 0;
-			end else begin
-				counter <= counter + 1;
-			end
-		end
-	
-	
-	
-endmodule 
+	end
+
+endmodule
 	

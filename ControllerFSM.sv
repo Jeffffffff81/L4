@@ -2,7 +2,6 @@
 
 /*
  * This FSM Controls all other FSMs through start/stop signals
- *
  */
 
 module ControllerFSM(clock, startTask1, stopTask1);
@@ -14,8 +13,8 @@ module ControllerFSM(clock, startTask1, stopTask1);
      //state encoding: {state bits}, !startTask1
      
     reg[4:0] state;
-    parameter init_memory = 4'b0000_0;
-    parameter idle = 4'b0001_1;
+    parameter init_memory = 5'b0000_0;
+    parameter idle = 5'b0001_1;
     
     //output logic:
     assign startTask1 = !state[0];
@@ -23,8 +22,9 @@ module ControllerFSM(clock, startTask1, stopTask1);
     //state transition logic:
     always_ff @(posedge clock) begin
         case (state)
+		  
             init_memory: begin
-                             state <= idle;
+							        state <= init_memory;
                          end
             idle:        begin
                              state <= idle;
