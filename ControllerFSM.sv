@@ -10,26 +10,26 @@ module ControllerFSM(clock, startTask1, stopTask1);
     output logic startTask1;
     input logic stopTask1;
 
-     //state encoding: {state bits}, !startTask1
+     //state encoding: {state bits}, startTask1
      
     reg[4:0] state;
-    parameter init_memory = 5'b0000_0;
-    parameter idle = 5'b0001_1;
+	 parameter initialize = 5'b0000_0;
+    parameter start_task_1 = 5'b0000_1;
+    parameter wait_for_task1_finish = 5'b0001_0;
     
     //output logic:
-    assign startTask1 = !state[0];
+    assign startTask1 = state[1];
 
     //state transition logic:
     always_ff @(posedge clock) begin
         case (state)
+				initialize: state <= start_task_1;
 		  
-            init_memory: begin
-							        state <= init_memory;
-                         end
-            idle:        begin
-                             state <= idle;
-                         end
-            default: state <= init_memory;
+            start_task_1: state <= wait_for_task1_finish;
+				
+				wait_for_task1_finish: state <= (stopTask1) ? wait_for_task1_finish : wait_for_task1_finish; //TODO: IMPLEMENT MORE
+				
+            default: state <= initialize;
         endcase
     end
 endmodule
