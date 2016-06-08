@@ -1,3 +1,20 @@
+`default_nettype none
+
+/*
+ * This FSM will initialize the contents of RAM to:
+ * for(int i = 0; i < 256; i++) {
+ *     s[i]
+ * }
+ *
+ * Inputs:   clock: the clock it runs on
+ *           start: tells it to start initializing
+ *           
+ * Outputs   stop: pulsed when FSM is done
+ *           wren: set when we want to write 'data' to s_RAM
+ *           address: the address into s_RAM
+ *           data: data to be written to s_RAM
+ */
+
 module task1FSM(start, clock, data, wren, stop, address);
 	input logic clock, start;
 	output logic wren, stop;
