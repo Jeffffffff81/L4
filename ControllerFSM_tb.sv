@@ -3,7 +3,6 @@ module ControllerFSM_tb();
 
     logic startTask1, startTask2a;
     logic stopTask1, stopTask2a;
-  
 
     ControllerFSM dut(
 	.clock(clock),

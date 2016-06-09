@@ -33,7 +33,7 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 
 	//counter. outputs i:
 	always_ff @(posedge clock) begin
-		if(i_reset)
+		if(i_reset || finish)
 			i <= 0;
 		else if(i_inc)
 			i <= i + 1;
@@ -46,7 +46,7 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 	//logic for calculating j
 	//note: %256 may not be needed
 	always_ff @(posedge clock) begin
-		if(j_reset)
+		if(j_reset || finish)
 			j <= 0;
 		else if (enable_j) begin
 			if(i%3 == 2)
@@ -62,7 +62,9 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 
 	//logic for calculating si
 	always_ff @(posedge clock) begin
-		if (enable_si) 
+		if (finish)
+			si <= 0;
+		else if (enable_si) 
 			si <= q;
 		else
 			si <= si;
@@ -70,7 +72,9 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 
 	//logic for calculating sj
 	always_ff @(posedge clock) begin
-		if (enable_sj) 
+		if (finish)
+			sj <= 0;
+		else if (enable_sj) 
 			sj <= q;
 		else
 			sj <= sj;
@@ -84,15 +88,15 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 	parameter check_if_done = 14'b0010_0_0_0_0_0_0_0_0_0_0;
 	parameter get_si_1      = 14'b0011_0_0_0_0_0_0_0_0_1_0;
 	parameter get_si_2      = 14'b0100_0_0_1_0_0_0_0_0_1_0;
-	parameter calc_j	      = 14'b0101_0_1_0_0_0_0_0_0_0_0;
+	parameter calc_j        = 14'b0101_0_1_0_0_0_0_0_0_0_0;
 	parameter get_sj_1      = 14'b0110_0_0_0_0_0_0_0_0_0_0;
 	parameter get_sj_2      = 14'b0111_0_0_0_1_0_0_0_0_0_0;
-	parameter write_sj_1	   = 14'b1000_0_0_0_0_0_0_0_0_1_0;
-	parameter write_sj_2	   = 14'b1001_0_0_0_0_0_0_0_0_1_1;
-	parameter write_si_1	   = 14'b1010_0_0_0_0_0_0_0_1_0_0; 
-	parameter write_si_2	   = 14'b1011_0_0_0_0_0_0_0_1_0_1; 
+	parameter write_sj_1	= 14'b1000_0_0_0_0_0_0_0_0_1_0;
+	parameter write_sj_2	= 14'b1001_0_0_0_0_0_0_0_0_1_1;
+	parameter write_si_1	= 14'b1010_0_0_0_0_0_0_0_1_0_0; 
+	parameter write_si_2	= 14'b1011_0_0_0_0_0_0_0_1_0_1; 
 	parameter increment_i   = 14'b1100_0_0_0_0_1_0_0_0_0_0; 
-	parameter finished	   = 14'b1101_1_0_0_0_0_0_0_0_0_0; 
+	parameter finished	= 14'b1101_1_0_0_0_0_0_0_0_0_0; 
 
 
 	assign wren = state[0];
