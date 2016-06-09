@@ -7,8 +7,6 @@ module task2aFSM_tb();
 	logic finish, wren;
 	logic[7:0] address, data;
 
-	assign q = 
-
 	task2aFSM dut(
 		.clock(clock),
 		.start(start),

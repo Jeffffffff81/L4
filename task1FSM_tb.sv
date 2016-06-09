@@ -1,10 +1,9 @@
 
 module task2aFSM_tb();
 	logic clock, start;
-	logic[7:0] address, data;
-
-	assign q = 
-
+	logic[7:0] address, data, q;
+	logic[23:0] secret_key;
+	
 	task2aFSM dut(
 		.clock(clock),
 		.start(start),
