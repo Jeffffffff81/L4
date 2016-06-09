@@ -55,14 +55,14 @@ module ksa(
 	
 	
 	/*
-	 * S memory
+	 * S memory (pseudo random bytes)
 	 */
 	logic[7:0] s_address; assign s_address = task1_s_address | task2a_s_address; 
 	logic[7:0] s_data; assign s_data = task1_s_data | task2a_s_data;  
 	logic[7:0] s_q;
 	logic s_wren; assign s_wren = task1_s_wren | task2a_s_wren;
 	 
-	s_memory(
+	s_memory working_memory(
 		.clock(clk),
 		.address(s_address),
 		.data(s_data),
@@ -70,9 +70,31 @@ module ksa(
 		.wren(s_wren)
 	);
 	
+  /*
+	* ROM (encrypted message)
+	*/
+	rom_memory encrypted_message (
+		.address(),
+		.clock(clk),
+		.q()
+	);
+	 
+	/*
+	 * Decrypted Message RAM
+	 */
+	logic[7:0] decrypted_address, decrypted_data;
+	logic decrypted_wren;
+	s_memory decrypted_message(
+		.clock(clk),
+		.address(decrypted_address),
+		.data(decrypted_data),
+		.q(),
+		.wren(decrypted_wren)
+	);
+	
 	/*
 	 * State machines for each task
-	 */
+	 */ 
 	logic[7:0] task1_s_data, task1_s_address;
 	logic task1_s_wren;
 	task1FSM(
