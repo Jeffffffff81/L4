@@ -50,11 +50,11 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 			j <= 0;
 		else if (enable_j) begin
 			if(i%3 == 2)
-				j <= (j + si + secret_key[7:0]) % 256;
+				j <= (j + si + secret_key[7:0]);
 			else if(i%3 == 1)
-				j <= (j + si + secret_key[15:8]) % 256;
+				j <= (j + si + secret_key[15:8]);
 			else
-				j <= (j + si + secret_key[23:16]) % 256;
+				j <= (j + si + secret_key[23:16]);
 		end
 		else
 			j <= j;
