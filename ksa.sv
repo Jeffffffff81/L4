@@ -43,20 +43,24 @@ module ksa(
 	/*
 	 * Control
 	 */
-	wire startTask1, stopTask1;
+	wire startTask1, stopTask1, startTask2a, stopTask2a;
 	 
 	ControllerFSM(
 		.clock(clk),
 		.startTask1(startTask1),
-		.stopTask1(stopTask1)
+		.stopTask1(stopTask1),
+		.startTask2a(startTask2a),
+		.stopTask2a(stopTask2a)
 	);
 	
 	
 	/*
-	 * S memory and controllers
+	 * S memory
 	 */
-	logic[7:0] s_address, s_data,  s_q;
-	logic s_wren;
+	logic[7:0] s_address; assign s_address = task1_s_address | task2a_s_address; 
+	logic[7:0] s_data; assign s_data = task1_s_data | task2a_s_data;  
+	logic[7:0] s_q;
+	logic s_wren; assign s_wren = task1_s_wren | task2a_s_wren;
 	 
 	s_memory(
 		.clock(clk),
@@ -66,13 +70,31 @@ module ksa(
 		.wren(s_wren)
 	);
 	
+	/*
+	 * State machines for each task
+	 */
+	logic[7:0] task1_s_data, task1_s_address;
+	logic task1_s_wren;
 	task1FSM(
 		.clock(clk),
 		.start(startTask1),
-		.stop(),
-		.data(s_data),
-		.address(s_address),
-		.wren(s_wren)
+		.stop(stopTask1),
+		.data(task1_s_data),
+		.address(task1_s_address),
+		.wren(task1_s_wren)
+	);
+	
+	logic[7:0] task2a_s_data, task2a_s_address;
+	logic task2a_s_wren;
+	task2aFSM(
+		.clock(clk),
+		.start(startTask2a),
+		.finish(stopTask2a),
+		.secret_key({14'b0, SW[9:0]}),
+		.q(s_q),
+		.wren(task2a_s_wren),
+		.address(task2a_s_address),
+		.data(task2a_s_data)
 	);
 	
 endmodule

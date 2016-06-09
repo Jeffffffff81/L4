@@ -21,17 +21,16 @@ module task1FSM(start, clock, data, wren, stop, address);
 	output logic [7:0] data, address;
 	
 	//state encoding {state bits}, {wren}, {inc}, {stop}
-	logic[6:0] state;
-	parameter idle = 7'b0000_0_0_0;
-	parameter initialize_a = 7'b0001_1_0_0;
-	parameter initialize_b = 7'b0010_0_1_0;
-	parameter finished = 7'b0010_0_0_1;
+	logic[7:0] state;
+	parameter idle = 8'b0000_0_0_0_0;
+	parameter initialize_a = 8'b0001_1_1_0_0;
+	parameter initialize_b = 8'b0010_1_0_1_0;
+	parameter finished = 8'b0010_1_0_0_1;
 	
-	//output logic:
-	logic inc;
-	
+	//internal/output logic:
+	logic reset; assign reset = !state[3];
 	assign wren = state[2];
-	assign inc = state[1];
+	logic inc; assign inc = state[1];
 	assign stop = state[0];
 	
 	reg[7:0] counter = 0;
@@ -39,6 +38,8 @@ module task1FSM(start, clock, data, wren, stop, address);
 		if(inc)
 			counter <= counter + 1;
 		else if (inc == 8'b1111_1111)
+			counter <= 0;
+		else if (reset)
 			counter <= 0;
 		else
 			counter <= counter;
