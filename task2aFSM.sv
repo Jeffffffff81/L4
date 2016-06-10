@@ -44,7 +44,6 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 	end
 
 	//logic for calculating j
-	//note: %256 may not be needed
 	always_ff @(posedge clock) begin
 		if(j_reset || finish)
 			j <= 0;
@@ -117,7 +116,7 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 	//state transtition logic:	
 	always_ff @(posedge clock) 
 		case (state)
-			idle: state <= (start) ? initialize : idle;
+			idle:          state <= (start) ? initialize : idle;
 			initialize:    state <= check_if_done;
 			check_if_done: state <= (i == 8'd255) ? finished : get_si_1; //DEBUG? should be 256?
 			get_si_1:      state <= get_si_2;
