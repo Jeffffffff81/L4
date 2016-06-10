@@ -45,7 +45,7 @@ module ksa(
 	 */
 	wire startTask1, finishTask1, startTask2a, finishTask2a,
 	startTask2b, finishTask2b;
-	 
+	
 	ControllerFSM(
 		.clock(clk),
 		.startTask1(startTask1),
@@ -60,10 +60,10 @@ module ksa(
 	/*
 	 * S memory (pseudo random bytes)
 	 */
-	logic[7:0] s_address; assign s_address = task1_s_address | task2a_s_address; 
-	logic[7:0] s_data; assign s_data = task1_s_data | task2a_s_data;  
+	logic[7:0] s_address; assign s_address = task1_address | task2a_address | task2b_address; 
+	logic[7:0] s_data; assign s_data = task1_data | task2a_data | task2b_data;  
 	logic[7:0] s_q;
-	logic s_wren; assign s_wren = task1_s_wren | task2a_s_wren;
+	logic s_wren; assign s_wren = task1_s_wren | task2a_s_wren | task2b_s_wren;
 	 
 	s_memory working_memory(
 		.clock(clk),
@@ -76,40 +76,43 @@ module ksa(
   /*
 	* ROM (encrypted message)
 	*/
+	logic[7:0] rom_address; assign rom_address = task2b_address;
+	logic[7:0] rom_q;
 	rom_memory encrypted_message (
-		.address(),
+		.address(rom_address),
 		.clock(clk),
-		.q()
+		.q(rom_q)
 	);
 	 
 	/*
 	 * Decrypted Message RAM
 	 */
-	logic[7:0] decrypted_address, decrypted_data;
-	logic decrypted_wren;
+	logic[7:0] decrypt_address; assign decrypt_address = task2b_address;
+	logic[7:0] decrypt_data; assign decrypt_data = task2b_data;
+	logic decrypt_wren; assign decrypt_wren = task2b_decrypt_wren;
 	s_memory decrypted_message(
 		.clock(clk),
-		.address(decrypted_address),
-		.data(decrypted_data),
+		.address(decrypt_address),
+		.data(decrypt_data),
 		.q(),
-		.wren(decrypted_wren)
+		.wren(decrypt_wren)
 	);
 	
 	/*
 	 * State machines for each task
 	 */ 
-	logic[7:0] task1_s_data, task1_s_address;
+	logic[7:0] task1_data, task1_address;
 	logic task1_s_wren;
 	task1FSM(
 		.clock(clk),
 		.start(startTask1),
 		.stop(finishTask1),
-		.data(task1_s_data),
-		.address(task1_s_address),
+		.data(task1_data),
+		.address(task1_address),
 		.wren(task1_s_wren)
 	);
 	
-	logic[7:0] task2a_s_data, task2a_s_address;
+	logic[7:0] task2a_data, task2a_address;
 	logic task2a_s_wren;
 	task2aFSM(
 		.clock(clk),
@@ -118,8 +121,22 @@ module ksa(
 		.secret_key({14'b0, SW[9:0]}),
 		.q(s_q),
 		.wren(task2a_s_wren),
-		.address(task2a_s_address),
-		.data(task2a_s_data)
+		.address(task2a_address),
+		.data(task2a_data)
+	);
+	
+	logic[7:0] task2b_data, task2b_address;
+	logic task2b_s_wren, task2b_decrypt_wren;
+	task2bFSM #(.MESSAGE_LENGTH(32))(
+		.clock(clk),
+		.start(1'b0), //DEBUG
+		.finish(finishTask2b),
+		.s_q(s_q),
+		.rom_q(rom_q),
+		.s_wren(task2b_s_wren),
+		.decrypt_wren(task2b_decrypt_wren),
+		.data(task2b_data),
+		.address(task2b_address)
 	);
 	
 endmodule

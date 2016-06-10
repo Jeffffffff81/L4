@@ -47,7 +47,7 @@ module task2bFSM(clock, start, finish, s_q, rom_q, s_wren, decrypt_wren, data, a
 		if(k_reset || finish)
 			k <= 0;
 		else if (k_inc)
-			k <= k + 1;
+			k <= k + 8'd1;
 		else if (k == MESSAGE_LENGTH)
 			k <= 0;
 		else
