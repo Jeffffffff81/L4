@@ -154,9 +154,9 @@ module task2bFSM(clock, start, finish, s_q, rom_q, s_wren, decrypt_wren, data, a
 
 	always_comb begin
 		case(state[3:2])
-			00: data = si;
-			01: data = sj;
-			10: data = f ^ s_q; //s_q should be set to rom[k] for this
+			2'b00: data = si;
+			2'b01: data = sj;
+			2'b10: data = f ^ s_q; //s_q should be set to rom[k] for this
 			default: data = 0;
 		endcase
 	end
