@@ -28,7 +28,7 @@
  *           address: address output
  */
 module task2bFSM(clock, start, finish, s_q, rom_q, s_wren, decrypt_wren, data, address);
-	parameter MESSAGE_LENGTH = 6; //DEBUG
+	parameter MESSAGE_LENGTH = 32; //DEBUG
 	
 	input logic clock, start;
 	input logic[7:0] s_q, rom_q;
@@ -145,10 +145,10 @@ module task2bFSM(clock, start, finish, s_q, rom_q, s_wren, decrypt_wren, data, a
 
 	always_comb begin
 		case(state[5:4]) 
-			00: address = i;
-			01: address = j;
-			10: address = (si + sj) % 256;
-			11: address = k;
+			2'b00: address = i;
+			2'b01: address = j;
+			2'b10: address = (si + sj) % 256;
+			2'b11: address = k;
 		endcase
 	end
 

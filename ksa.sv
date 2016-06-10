@@ -43,14 +43,17 @@ module ksa(
 	/*
 	 * Control
 	 */
-	wire startTask1, stopTask1, startTask2a, stopTask2a;
+	wire startTask1, finishTask1, startTask2a, finishTask2a,
+	startTask2b, finishTask2b;
 	 
 	ControllerFSM(
 		.clock(clk),
 		.startTask1(startTask1),
-		.stopTask1(stopTask1),
+		.finishTask1(finishTask1),
 		.startTask2a(startTask2a),
-		.stopTask2a(stopTask2a)
+		.finishTask2a(finishTask2a),
+		.startTask2b(startTask2b),
+		.finishTask2b(finishTask2b)
 	);
 	
 	
@@ -100,7 +103,7 @@ module ksa(
 	task1FSM(
 		.clock(clk),
 		.start(startTask1),
-		.stop(stopTask1),
+		.stop(finishTask1),
 		.data(task1_s_data),
 		.address(task1_s_address),
 		.wren(task1_s_wren)
@@ -111,7 +114,7 @@ module ksa(
 	task2aFSM(
 		.clock(clk),
 		.start(startTask2a),
-		.finish(stopTask2a),
+		.finish(finishTask2a),
 		.secret_key({14'b0, SW[9:0]}),
 		.q(s_q),
 		.wren(task2a_s_wren),
