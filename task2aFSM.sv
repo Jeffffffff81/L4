@@ -28,7 +28,8 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 	output logic[7:0] address, data;
 
 	//internal wires:
-	reg [7:0] i, j, si, sj;
+	reg [7:0] j, si, sj;
+	reg [8:0] i;
 	logic enable_j, enable_si, enable_sj, i_inc, i_reset, j_reset, address_use_i, data_use_si;
 
 	//counter. outputs i:
@@ -37,7 +38,7 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 			i <= 0;
 		else if(i_inc)
 			i <= i + 1;
-		else if (i == 8'b1111_1111)
+		else if (i == 9'b1_0000_0000)
 			i <= 0;
 		else	
 			i <= i;
@@ -110,15 +111,14 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 	assign finish = state[9];
 
 	//other output logic:
-	assign address = (address_use_i) ? i : j;
+	assign address = (address_use_i) ? i[7:0] : j;
 	assign data = (data_use_si) ? si : sj;
 
 	//state transtition logic:	
 	always_ff @(posedge clock) 
 		case (state)
 			idle:          state <= (start) ? initialize : idle;
-			initialize:    state <= check_if_done;
-			check_if_done: state <= (i == 8'd255) ? finished : get_si_1; //DEBUG? should be 256?
+			initialize:    state <= get_si_1;
 			get_si_1:      state <= get_si_2;
 			get_si_2:      state <= calc_j;
 			calc_j:        state <= get_sj_1;
@@ -129,6 +129,9 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 			write_si_1:    state <= write_si_2;
 			write_si_2:    state <= increment_i;
 			increment_i:   state <= check_if_done;
+			check_if_done: state <= (i == 9'd256) ? finished : get_si_1; //DEBUG? should be 256? //HACK (0)
+			
+			finished:		state <= idle;
 			default: state <= idle;
 		endcase
 

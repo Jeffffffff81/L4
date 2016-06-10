@@ -1,12 +1,9 @@
 
 module task2aFSM_tb();
 	logic clock, start;
+	logic[7:0] address, data, q;
 	logic[23:0] secret_key;
-	logic[7:0] q;
-
-	logic finish, wren;
-	logic[7:0] address, data;
-
+	
 	task2aFSM dut(
 		.clock(clock),
 		.start(start),
@@ -36,7 +33,7 @@ module task2aFSM_tb();
 		#2;
 		start = 0;
 
-		#600;
+		#11100;
 		$stop;
 	end
 
