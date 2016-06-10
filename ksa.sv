@@ -129,7 +129,7 @@ module ksa(
 	logic task2b_s_wren, task2b_decrypt_wren;
 	task2bFSM #(.MESSAGE_LENGTH(32))(
 		.clock(clk),
-		.start(1'b0), //DEBUG
+		.start(startTask2b), //DEBUG
 		.finish(finishTask2b),
 		.s_q(s_q),
 		.rom_q(rom_q),

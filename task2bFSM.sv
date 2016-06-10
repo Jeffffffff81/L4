@@ -79,7 +79,7 @@ module task2bFSM(clock, start, finish, s_q, rom_q, s_wren, decrypt_wren, data, a
 		if (finish)
 			si <= 0;
 		else if (enable_si) 
-			si <= s_q;
+			si <= s_q; //ensure address is set to i
 		else
 			si <= si;
 	end
@@ -89,7 +89,7 @@ module task2bFSM(clock, start, finish, s_q, rom_q, s_wren, decrypt_wren, data, a
 		if (finish)
 			sj <= 0;
 		else if (enable_sj) 
-			sj <= s_q;
+			sj <= s_q; //ensure address is set to j
 		else
 			sj <= sj;
 	end
@@ -112,7 +112,7 @@ module task2bFSM(clock, start, finish, s_q, rom_q, s_wren, decrypt_wren, data, a
 	parameter get_i                   = 21'b00011_0_0_1_0_0_0_0_0_0_0_00_00_0_0;
 	parameter set_addr_to_i           = 21'b00100_0_0_0_0_0_0_0_0_0_0_00_00_0_0;
 	parameter get_si                  = 21'b00101_0_0_0_0_1_0_0_0_0_0_00_00_0_0;
-        parameter get_j                   = 21'b00110_0_0_0_1_0_0_0_0_0_0_00_00_0_0;
+   parameter get_j                   = 21'b00110_0_0_0_1_0_0_0_0_0_0_00_00_0_0;
 	parameter set_addr_to_j           = 21'b00111_0_0_0_0_0_0_0_0_0_0_01_00_0_0;
 	parameter get_sj                  = 21'b01000_0_0_0_0_0_1_0_0_0_0_01_00_0_0;
 	//begin swap:
@@ -124,7 +124,7 @@ module task2bFSM(clock, start, finish, s_q, rom_q, s_wren, decrypt_wren, data, a
 	parameter set_addr_to_si_plus_sj  = 21'b01101_0_0_0_0_0_0_0_0_0_0_10_00_0_0;
 	parameter get_f                   = 21'b01110_0_1_0_0_0_0_0_0_0_0_10_00_0_0;
 	parameter set_addr_and_data_final = 21'b01111_0_0_0_0_0_0_0_0_0_0_11_10_0_0;
-	parameter output_decrypt	  = 21'b10000_0_0_0_0_0_0_0_0_0_0_11_10_0_1;
+	parameter output_decrypt			 = 21'b10000_0_0_0_0_0_0_0_0_0_0_11_10_0_1;
 	parameter inc_k                   = 21'b10001_0_0_0_0_0_0_1_0_0_0_00_00_0_0;
 
 	parameter finished                = 21'b10010_1_0_0_0_0_0_0_0_0_0_00_00_0_0;
@@ -156,7 +156,7 @@ module task2bFSM(clock, start, finish, s_q, rom_q, s_wren, decrypt_wren, data, a
 		case(state[3:2])
 			2'b00: data = si;
 			2'b01: data = sj;
-			2'b10: data = f ^ s_q; //s_q should be set to rom[k] for this
+			2'b10: data = f ^ rom_q; //address should be k for this
 			default: data = 0;
 		endcase
 	end
@@ -171,7 +171,7 @@ module task2bFSM(clock, start, finish, s_q, rom_q, s_wren, decrypt_wren, data, a
 			set_addr_to_i:          state <= get_si;
 			get_si:                 state <= get_j;
 			get_j:                  state <= set_addr_to_j;
-                        set_addr_to_j:          state <= get_sj;
+         set_addr_to_j:          state <= get_sj;
 			get_sj:                 state <= si_gets_sj_1;
 			si_gets_sj_1:           state <= si_gets_sj_2;
 			si_gets_sj_2:           state <= sj_gets_si_1;

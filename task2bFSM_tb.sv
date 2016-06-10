@@ -32,7 +32,7 @@ module task2bFSM_tb();
 		#2;
 		start = 0;
 
-		#600;
+		#1300;
 		$stop;
 	end
 

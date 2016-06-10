@@ -129,7 +129,7 @@ module task2aFSM(clock, start, finish, secret_key, wren, data, address, q);
 			write_si_1:    state <= write_si_2;
 			write_si_2:    state <= increment_i;
 			increment_i:   state <= check_if_done;
-			check_if_done: state <= (i == 9'd256) ? finished : get_si_1; //DEBUG? should be 256? //HACK (0)
+			check_if_done: state <= (i == 9'd256) ? finished : get_si_1;
 			
 			finished:		state <= idle;
 			default: state <= idle;
