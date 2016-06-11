@@ -1,7 +1,8 @@
 `default_nettype none
 
 /*
- * This FSM will decrypt the message stored in ROM, and output it to the decrypted RAM. It uses a 8x256 working RAM
+ * This FSM will decrypt the message stored in ROM, and output it to the decrypted RAM. 
+ * It uses a 8x256 working RAM. 
  *
  * Inputs:   clock: the clock which this FSM runs on.
  *           s_q: data from the working s_RAM
