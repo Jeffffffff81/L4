@@ -1,4 +1,3 @@
-
 module task2bFSM_tb();
 	logic clock, start, finish, s_wren, decrypt_wren;
 	logic[7:0] s_q, rom_q, data, address;

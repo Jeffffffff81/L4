@@ -28,7 +28,8 @@ s_address, s_data, s_q, s_wren, rom_address, rom_q, decrypt_address, decrypt_dat
 	output logic found, not_found;
 	output logic [23:0] display_key;
 
-	output logic [7:0] s_address, s_data, rom_address, decrypt_address, decrypt_data;
+	output logic [7:0] s_address, s_data, decrypt_data;
+	output logic [4:0] rom_address, decrypt_address;
 	output logic s_wren, decrypt_wren;
 	input logic [7:0] s_q, rom_q, decrypt_q;
 	
@@ -58,7 +59,7 @@ s_address, s_data, s_q, s_wren, rom_address, rom_q, decrypt_address, decrypt_dat
 		else if (enable_found)
 			found <= 1;
 		else
-			found <= 0;
+			found <= found;
 	end
 	//remember not_found:
 	always_ff @(posedge clock) begin
@@ -67,13 +68,13 @@ s_address, s_data, s_q, s_wren, rom_address, rom_q, decrypt_address, decrypt_dat
 		else if (enable_not_found)
 			not_found <= 1;
 		else
-			not_found <= 0;
+			not_found <= not_found;
 	end
 
 	//sub modules:
 	logic [7:0] task1_data, task1_address;
 	logic task1_s_wren;
-	task1FSM(
+	task1FSM setup(
 		.clock(clock),
 		.start(start_setup),
 		.finish(finish_setup),
@@ -84,7 +85,7 @@ s_address, s_data, s_q, s_wren, rom_address, rom_q, decrypt_address, decrypt_dat
 
 	logic [7:0] task2a_data, task2a_address;
 	logic task2a_s_wren;
-	task2aFSM(
+	task2aFSM scramble(
 		.clock(clock),
 		.start(start_scramble),
 		.finish(finish_scramble),
@@ -97,7 +98,7 @@ s_address, s_data, s_q, s_wren, rom_address, rom_q, decrypt_address, decrypt_dat
 
 	logic [7:0] task2b_address, task2b_data;
 	logic task2b_s_wren, task2b_decrypt_wren;
-	task2bFSM(
+	task2bFSM decode(
 		.clock(clock),
 		.start(start_decode),
 		.finish(finish_decode),
@@ -109,8 +110,8 @@ s_address, s_data, s_q, s_wren, rom_address, rom_q, decrypt_address, decrypt_dat
 		.data(task2b_data)
 	);
 
-	logic [7:0] check_address;
-	checkASCII(
+	logic [4:0] check_address;
+	checkASCII check(
 		.clock(clock),
 		.start(start_check),
 		.finish(finish_check),
@@ -155,8 +156,8 @@ s_address, s_data, s_q, s_wren, rom_address, rom_q, decrypt_address, decrypt_dat
 	assign s_data = task1_data | task2a_data | task2b_data;
 	assign decrypt_data = task2b_data;
 	assign s_address = task1_address | task2a_address | task2b_address;
-	assign rom_address = task2b_address;
-	assign decrypt_address = task2b_address | check_address;
+	assign rom_address = task2b_address[4:0];
+	assign decrypt_address = task2b_address[4:0] | check_address;
 
 	//next state logic:
 	always_ff @(posedge clock) begin
