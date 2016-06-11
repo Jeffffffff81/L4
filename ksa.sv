@@ -106,7 +106,7 @@ module ksa(
 	task1FSM(
 		.clock(clk),
 		.start(startTask1),
-		.stop(finishTask1),
+		.finish(finishTask1),
 		.data(task1_data),
 		.address(task1_address),
 		.wren(task1_s_wren)

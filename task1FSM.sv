@@ -9,18 +9,18 @@
  * Inputs:   clock: the clock it runs on
  *           start: tells it to start initializing
  *           
- * Outputs   stop: pulsed when FSM is done
+ * Outputs   finish: pulsed when FSM is done
  *           wren: set when we want to write 'data' to s_RAM
  *           address: the address into s_RAM
  *           data: data to be written to s_RAM
  */
 
-module task1FSM(start, clock, data, wren, stop, address);
+module task1FSM(clock, start, finish, data, wren, address);
 	input logic clock, start;
-	output logic wren, stop;
+	output logic wren, finish;
 	output logic [7:0] data, address;
 	
-	//state encoding {state bits}, {wren}, {inc}, {stop}
+	//state encoding {state bits}, {wren}, {inc}, {finish}
 	logic[7:0] state;
 	parameter idle = 8'b0000_0_0_0_0;
 	parameter initialize_a = 8'b0001_1_1_0_0;
@@ -31,7 +31,7 @@ module task1FSM(start, clock, data, wren, stop, address);
 	logic reset; assign reset = !state[3];
 	assign wren = state[2];
 	logic inc; assign inc = state[1];
-	assign stop = state[0];
+	assign finish = state[0];
 	
 	reg[7:0] counter = 0;
 	always_ff @(posedge clock) begin

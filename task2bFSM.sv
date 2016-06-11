@@ -37,7 +37,6 @@ module task2bFSM(clock, start, finish, s_q, rom_q, s_wren, decrypt_wren, data, a
 	output logic[7:0] data, address;
 
 	//internal wires:
-	//f_intermediate = (s[i] + s[j]) % 256
 	logic[7:0] i, j, si, sj, k, f;
 	logic enable_f, enable_i, enable_j, enable_si, enable_sj, k_inc, k_reset, i_reset, j_reset;
 	logic[1:0] address_to_use, data_to_use;
