@@ -11,7 +11,7 @@
  *
  * Inputs:   clock: the clock it runs on
  *           start: tells it to start scrambling
- *           secret_key_sw: comes from SW[9:0]. Sets the lowest 10 bits, The upper 14 are 0.
+ *           secret_key: the secret key. Used to pseudo-randomize the RAM.
  *           q: data from s_RAM
  *           
  * Outputs   finish: pulsed when FSM is done
