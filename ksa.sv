@@ -84,7 +84,7 @@ module ksa(
 	/*
 	 * Decrypted Message RAM
 	 */
-	s_memory decrypted_message(
+	decrypt_ram decrypted_message(
 		.clock(clk),
 		.address(decrypt_address),
 		.data(decrypt_data),
